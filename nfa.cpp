@@ -59,7 +59,7 @@ int main() {
 
 	// Print Table
 	cout << "    | a b" << endl;
-	cout << "----+------" << endl;
+	cout << "----+----" << endl;
 
 	for (int i = 0; i < nstates; i++) {
 		bool accepts = false;
@@ -74,5 +74,29 @@ int main() {
 		for(vector<int>::iterator it = transitions[i][1].begin(); it != transitions[i][1].end(); ++it)
 			cout << " " << *it;
 		cout << "}" << endl;
+	}
+
+	//Process Words
+	for (int w = 0; w < nwords; w++) {
+		string word = words[w];
+		vector<int> current_states(1, 0);
+		for ( string::iterator it=word.begin(); it != word.end(); ++it) {
+			vector<int> new_states;
+			for (vector<int>::iterator csit = current_states.begin(); csit != current_states.end(); ++csit) {
+				if (*it == 'a')
+					for (vector<int>::iterator vit = transitions[*csit][0].begin(); vit != transitions[*csit][0].end(); ++vit)
+						new_states.push_back(*vit);
+				else
+					for (vector<int>::iterator vit = transitions[*csit][1].begin(); vit != transitions[*csit][1].end(); ++vit)
+						new_states.push_back(*vit);
+			}
+			current_states = new_states;
+		}
+
+		bool accepts = false;
+		for (vector<int>::iterator csit = current_states.begin(); csit != current_states.end(); ++csit) 
+			for (int a = 0; a < naccepting; a++)
+				accepts = (accepting[a] == *csit ? true: accepts);
+		cout << word << (accepts ? " accepted" : " rejected") << endl;
 	}
 }
